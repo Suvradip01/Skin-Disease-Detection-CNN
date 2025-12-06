@@ -2,81 +2,61 @@
 
 ## **A Deep Learning Approach for Automated Dermatological Image Classification**
 
-[![License: ISC](https://img.shields.io/badge/License-ISC-blue.svg)](https://opensource.org/licenses/ISC)
-[![Python 3.x](https://img.shields.io/badge/Python-3.x-blue.svg)](https://www.python.org/downloads/)
-[![TensorFlow](https://img.shields.io/badge/TensorFlow-2.x-orange.svg)](https://www.tensorflow.org/)
+---
+
+| Status | Model Backbone | Framework | License |
+| :---: | :---: | :---: | :---: |
+| ✅ **Functional** | MobileNetV2 | TensorFlow / Keras | [![License: ISC](https://img.shields.io/badge/License-ISC-blue.svg)](https://opensource.org/licenses/ISC) |
 
 ---
 
-## 🧭 **Introduction**
+## 💡 **Introduction**
 
-Skin diseases affect millions globally, and timely diagnosis is critical for effective treatment. However, access to specialist dermatologists is often limited, particularly in remote and underserved areas.
+Skin diseases are a major global health concern, and early diagnosis is crucial. Limited access to dermatologists, especially in remote regions, creates a significant barrier to timely care.
 
-This project introduces a **lightweight and efficient deep-learning-based solution** for automated skin disease classification. By leveraging **MobileNetV2**—an architecture optimized for mobile and low-resource environments—the goal is to create a highly accurate, yet computationally efficient, diagnostic assistance system suitable for deployment on mobile devices or in basic clinic settings.
+This project addresses this challenge by developing a **deep-learning-based system** for automated classification of skin conditions from images. We utilize **MobileNetV2**, a state-of-the-art, lightweight, and efficient Convolutional Neural Network (CNN) architecture, making the resulting model highly suitable for deployment on mobile devices or low-resource computing systems.
 
----
+## 🎯 **Research Objectives**
 
-## 🎯 **Research Objective**
+1.  **Develop a reliable machine learning system** for multi-class classification of skin diseases from image data.
+2.  Implement **Transfer Learning** using a pre-trained MobileNetV2 model to accelerate convergence and reduce the need for extensive data.
+3.  Rigorously **evaluate performance** using training/validation metrics, loss curves, and visual predictions.
+4.  Establish a **structured, reproducible workflow** to facilitate future improvements and experimentation.
 
-* Develop a **reliable machine learning system** for classifying multiple skin disease categories from image data.
-* Utilize **transfer learning** with a MobileNetV2 backbone to accelerate model convergence and ensure robust feature extraction.
-* Evaluate performance rigorously using standard training/validation metrics and visualizations.
-* Establish a **structured and reproducible workflow** for easy future expansion and experimentation.
+## 🧠 **Methodology and Architecture**
 
----
+The system employs a hybrid architecture that balances the efficiency of a pre-trained backbone with a customized classification head.
 
-## 🧠 **Methodology**
+### 1. Data Preparation
 
-### **Model Architecture: Hybrid Transfer Learning**
+* **Source:** Images are organized into class-specific folders within the `dataset/` directory.
+* **Loading:** Utilizes `tf.keras.preprocessing.image_dataset_from_directory()` to handle file loading, shuffling, batching, and label generation.
+* **Preprocessing:** All images are resized to a uniform dimension ($190 \times 190$).
 
-The core of the system is a hybrid model leveraging the power and efficiency of a pre-trained CNN.
+### 2. Configuration Parameters
 
-| Component | Architecture | Purpose |
-| :--- | :--- | :--- |
-| **Base Model** | **MobileNetV2** (Pretrained on ImageNet) | Acts as a high-performance, efficient feature extractor. Initial layers are **frozen** to preserve learned, low-level representations. |
-| **Custom Head** | Global Average Pooling, Dense Layer(s), Softmax Output | Adapts the extracted features to the specific task of multi-class skin disease classification. |
-
-### **Configuration & Training Details**
-
-| Setting | Value |
+| Parameter | Value |
 | :--- | :--- |
-| **Input Image Size** | $190 \times 190 \times 3$ |
+| **Image Dimensions** | $190 \times 190 \times 3$ |
 | **Batch Size** | 16 |
-| **Epochs** | 50 |
+| **Epochs (Initial Training)** | 50 |
 | **Loss Function** | Sparse Categorical Crossentropy |
 | **Optimizer** | Adam |
-| **Data Loading** | `tf.keras.preprocessing.image_dataset_from_directory()` for efficient loading, resizing, and batching. |
+| **Number of Classes** | Determined dynamically from the dataset |
 
-### **Evaluation**
+### 3. Model Architecture
 
-The system's performance is monitored through **accuracy and loss curves** (Training vs. Validation) to visually inspect learning dynamics, stability, and identify potential overfitting.
-
----
+| Component | Description | Strategy |
+| :--- | :--- | :--- |
+| **Base Model** | **MobileNetV2** | Pretrained on ImageNet. Used as a robust feature extractor. Initial layers are **frozen** to preserve learned representations. |
+| **Classification Head** | Global Average Pooling, Dense Layer(s), Softmax Layer | Custom layers added on top of the base model to perform domain-specific multi-class classification. |
 
 ## 📊 **Results & Interpretation**
 
-The MobileNetV2-based classifier demonstrates **strong capability** in discerning complex skin disease patterns.
+The MobileNetV2-based model demonstrates **strong pattern recognition capability** even with limited domain-specific data.
 
-* **Robust Feature Extraction:** The pre-trained MobileNetV2 layers efficiently extract fundamental features (edges, textures, shapes), leading to smooth and stable learning curves.
-* **High Adaptability:** The transfer learning approach shows good potential for building scalable diagnostic assistance systems, even when adapting to a limited, domain-specific dataset.
-* **Deployment Suitability:** The use of MobileNetV2 ensures the model remains computationally lightweight, making it highly suitable for mobile telemedicine tools or low-resource deployments.
+* **Efficiency:** MobileNetV2's architecture ensures the model is fast and compact.
+* **Stability:** Transfer learning leads to smooth learning curves and stable accuracy improvement across epochs.
+* **Diagnostic Potential:** The approach shows high potential for building efficient diagnostic assistance systems and effective mobile telemedicine tools.
 
----
-
-## 🛠️ **Technologies Used**
-
-* **Core Language:** Python 3
-* **Deep Learning Framework:** TensorFlow / Keras
-* **Backbone:** MobileNetV2
-* **Visualization:** Matplotlib
-
----
-
-## ▶️ **How to Use & Project Structure**
-
-### **Prerequisites**
-
-You must have Python 3 and the following libraries installed:
-
-```bash
-pip install tensorflow matplotlib
+## 📂 **Project Structure**
