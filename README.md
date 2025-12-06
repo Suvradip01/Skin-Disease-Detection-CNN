@@ -61,7 +61,7 @@ The training pipeline is optimized with the following hyperparameters extracted 
 
 ## 🚀 Installation & Usage
 
-### 1. Clone the Repository
+### Clone the Repository
 ```bash
 git clone [https://github.com/yourusername/skin-disease-detection.git](https://github.com/yourusername/skin-disease-detection.git)
 cd skin-disease-detection
