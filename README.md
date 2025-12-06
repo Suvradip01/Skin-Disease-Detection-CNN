@@ -34,8 +34,9 @@ The dataset is structured into folders, where each folder represents an individu
 
 | Aspect | Detail | Tool/Method |
 | :--- | :--- | :--- |
-| **Loading** | Handles file loading, resizing, batch creation, shuffling, and label generation. | `tf.keras.preprocessing.image_dataset_from_directory()` |
-| **Image Size** | All images are standardized to a consistent size. | $190 \times 190$ |
+| **Data Source** | Images organized into class-specific folders (`dataset/`). | Custom |
+| **Data Loading** | Handles file loading, resizing, batch creation, shuffling, and label generation. | `tf.keras.preprocessing.image_dataset_from_directory()` |
+| **Preprocessing** | All images are standardized to a consistent size. | $190 \times 190$ |
 | **Labeling** | Labels are dynamically determined from the folder names. | **Categorical** |
 
 ### **2. Configuration & Training Details**
@@ -44,7 +45,7 @@ The dataset is structured into folders, where each folder represents an individu
 | :--- | :--- | :--- |
 | **Input Image Size** | **$190 \times 190 \times 3$** | Standardized input for the CNN. |
 | **Batch Size** | **16** | Optimizes memory usage and training speed. |
-| **Epochs** | **50** | Adequate time for convergence while monitoring for overfitting. |
+| **Epochs** | **50** | The intended full training duration. |
 | **Loss Function** | **Sparse Categorical Crossentropy** | Suitable for multi-class classification with integer labels. |
 | **Optimizer** | **Adam** | A highly effective, adaptive optimization algorithm. |
 
@@ -54,7 +55,7 @@ The core of the system is a hybrid model leveraging the power and efficiency of 
 
 | Component | Architecture | Purpose |
 | :--- | :--- | :--- |
-| **Base Model** | **MobileNetV2** (Pretrained on **ImageNet**) | Acts as a high-performance, efficient feature extractor. Initial layers are **frozen** to preserve learned, low-level representations. |
+| **Base Model** | **MobileNetV2** (Pretrained on **ImageNet**) | Acts as a high-performance, efficient feature extractor. Initial layers are **frozen** to retain learned representations. |
 | **Custom Head** | Global Average Pooling, Dense Layer(s), **Softmax** Output | Adapts the extracted features to the specific task of multi-class skin disease classification. |
 
 ### **4. Evaluation**
@@ -68,10 +69,9 @@ The notebook includes detailed visualizations to monitor learning dynamics and p
 
 ## 📊 **Results & Interpretation**
 
-The **MobileNetV2**-based classifier demonstrates **strong capability** in discerning complex skin disease patterns.
+The **MobileNetV2**-based classifier demonstrates strong pattern recognition capability and high adaptability.
 
-* **Robust Feature Extraction:** The pre-trained layers provide robust low-level feature extraction (edges, textures, shapes), resulting in smooth and **stable learning curves**.
-* **High Adaptability:** The **transfer learning** approach shows excellent potential for building scalable diagnostic assistance systems, even with limited, domain-specific data.
+* **Robust Feature Extraction:** The pre-trained layers provide robust low-level feature extraction, resulting in smooth and **stable learning curves**.
 * **Deployment Suitability:** The choice of **MobileNetV2** ensures the model remains computationally **lightweight**, making it highly suitable for mobile telemedicine tools or low-resource deployments.
 
 ---
@@ -91,3 +91,56 @@ The **MobileNetV2**-based classifier demonstrates **strong capability** in disce
 ## ▶️ **How to Use & Project Structure**
 
 ### **1. Project Structure**
+
+AI-Skin-Disease-Detection/ │ ├── MobileNetV2.ipynb # 💻 Notebook containing all model building, training, and evaluation code. └── dataset/ # 🖼️ Image dataset organized by individual classes. ├── class_1/
+
+├── class_2/
+
+└── ...
+
+
+### **2. Prerequisites**
+
+You must have **Python 3** installed, along with the following libraries:
+
+```bash
+# Install the required libraries via pip
+pip install tensorflow matplotlib jupyter
+3. Setup Instructions
+Clone the repository:
+
+Bash
+
+git clone [Your Repository URL]
+cd AI-Skin-Disease-Detection
+Organize your dataset: Place your skin disease images into the required class-separated directory structure inside the dataset/ folder.
+
+dataset/
+   ├── classA/
+   ├── classB/
+   └── classC/
+Run the notebook:
+
+Bash
+
+jupyter notebook MobileNetV2.ipynb
+Execute Cells: Step through the notebook cells sequentially to load the dataset, build the MobileNetV2 model, start the 50-epoch training process, and finally generate the evaluation plots and sample predictions.
+
+🔍 Future Work
+To enhance the performance and reliability of this system, future developments may include:
+
+Data Augmentation: Implement advanced techniques (rotation, zoom, contrast adjustments) to improve model generalization.
+
+Deeper Fine-Tuning: Unfreeze and fine-tune deeper MobileNetV2 layers.
+
+Alternative Architectures: Evaluate alternative efficient architectures, such as EfficientNet or MobileNetV3.
+
+Deployment: Export the model to TensorFlow Lite for native mobile application integration.
+
+End-User Interface: Building a user-friendly diagnostic assistance interface.
+
+📜 License
+This project is licensed under the ISC License, allowing free use, modification, and distribution with attribution.
+
+🙌 Acknowledgements
+We thank Google Research for the creation of MobileNetV2, the TensorFlow/Keras community for their excellent framework, and the providers of the dermatology datasets used for experimentation.
