@@ -1,4 +1,4 @@
-# 🩺 AI-Based Skin Disease Detection using MobileNetV2
+# 🩺 AI-Based Skin Disease Detection using EfficientNetB3
 
 ![Python](https://img.shields.io/badge/Python-3.8%2B-blue)
 ![TensorFlow](https://img.shields.io/badge/TensorFlow-2.x-orange)
@@ -6,7 +6,7 @@
 
 ## 📌 Project Overview
 
-This project leverages **Deep Learning** and **Transfer Learning** to automate the detection and classification of skin diseases. Utilizing the **MobileNetV2** architecture—a state-of-the-art, lightweight convolutional neural network—the model is designed to be efficient enough for deployment on mobile and edge devices while maintaining high diagnostic accuracy.
+This project leverages **Deep Learning** and **Transfer Learning** to automate the detection and classification of skin diseases. Utilizing the **EfficientNetB3** architecture—a powerful convolutional neural network known for its efficiency and accuracy—the model is designed to provide high diagnostic precision.
 
 The system classifies skin lesions into **3 distinct categories**:
 1. **Benign**
@@ -17,100 +17,91 @@ The system classifies skin lesions into **3 distinct categories**:
 
 ## 🧠 Model Architecture & Methodology
 
-### Why MobileNetV2?
-We selected **MobileNetV2** as the backbone for this project due to its superior balance between latency and accuracy. It introduces two key architectural innovations:
-* **Inverted Residuals:** These allow the network to preserve information more effectively by connecting bottlenecks.
-* **Linear Bottlenecks:** This prevents non-linearities (like ReLU) from destroying information in low-dimensional manifolds.
+### Why EfficientNetB3?
+We selected **EfficientNetB3** as the backbone for this project due to its superior performance in image classification benchmarks. It uses compound scaling to uniformly scale network width, depth, and resolution.
 
 ### Transfer Learning Strategy
-Instead of training a deep network from scratch (which requires massive datasets and compute power), we utilized **Transfer Learning**:
-1.  **Pre-trained Backbone:** We utilized MobileNetV2 pre-trained on the **ImageNet** dataset (1.4M images) to extract robust features (edges, textures, patterns).
-2.  **Custom Head:** The top classification layers of MobileNetV2 were removed and replaced with a custom dense neural network tailored to our 3 classes.
-3.  **Fine-Tuning:** Initially, the backbone layers were frozen. In later stages, specific layers were unfrozen and trained with a lower learning rate to adapt the model specifically to dermatological textures.
+1.  **Pre-trained Backbone:** We utilized **EfficientNetB3** pre-trained on the **ImageNet** dataset to extract robust features. The model is integrated with **Mixed Precision (mixed_float16)** policy for faster training and reduced memory usage.
+2.  **Data Augmentation:** To improve generalization, the pipeline includes:
+    *   Random Flip (Horizontal & Vertical)
+    *   Random Rotation (0.2)
+    *   Random Zoom (0.2)
+    *   Random Contrast (0.2)
+3.  **Custom Head:**
+    *   Global Average Pooling 2D
+    *   Batch Normalization
+    *   Dropout (0.3)
+    *   Dense Output Layer (3 classes, Softmax activation, float32)
+4.  **Training Phases:**
+    *   **Phase 1:** Training top layers only (10 Epochs, LR=1e-3).
+    *   **Phase 2:** Fine-tuning the entire model (40 Epochs).
 
 ---
 
 ## 📂 Dataset Structure
 
-The model expects the dataset to be organized in a standard directory format suitable for `image_dataset_from_directory`:
+The model expects the dataset to be organized in a standard directory format:
 
-dataset/ ├── benign/ # Images of benign skin lesions ├── melanoma/ # Images of malignant melanoma └── non_melanoma_cancer/ # Images of other skin cancers
+`training/Diseases/` containing:
+*   `benign/`
+*   `melanoma/`
+*   `non_melanoma_cancer/`
 
-
-* **Total Images:** ~3,600 files
-* **Classes:** 3
-* **Input Shape:** `(190, 190, 3)`
+*   **Classes:** 3
+*   **Input Shape:** `(300, 300, 3)`
+*   **Split:** 70% Train, 20% Val, 10% Test
 
 ---
 
 ## ⚙️ Configuration & Training Parameters
 
-The training pipeline is optimized with the following hyperparameters extracted from the project code:
+The training pipeline is optimized with the following hyperparameters:
 
 | Parameter | Value | Description |
 | :--- | :--- | :--- |
-| **Base Model** | MobileNetV2 | Pre-trained on ImageNet |
-| **Input Shape** | 190 x 190 px | Resolution resized for the model |
-| **Batch Size** | 16 | Number of images processed per step |
-| **Epochs** | 50 | Maximum training iterations |
-| **Optimizer** | Adam | Adaptive learning rate optimization |
-| **Loss Function** | Sparse Categorical Crossentropy | For integer-encoded labels |
-| **Callbacks** | EarlyStopping, ReduceLROnPlateau | Prevents overfitting & optimizes learning rate |
+| **Base Model** | EfficientNetB3 | Pre-trained on ImageNet |
+| **Input Shape** | 300 x 300 px | Resolution resized for the model |
+| **Batch Size** | 8 | Number of images processed per step |
+| **Optimizer** | Adam | Learning rate 1e-3 (initial) |
+| **Loss Function** | Sparse Categorical Focal Loss | Gamma=2.0, Alpha=0.25 (Handles class imbalance) |
+| **Class Weights** | {0: 1.0, 1: 3.0, 2: 1.0} | Higher weight for Melanoma detection |
+| **Precision** | Mixed Float16 | Optimized for GPU inference |
 
 ---
 
 ## 🚀 Installation & Usage
 
-### Clone the Repository
+### 1. Clone the Repository
 ```bash
-git clone [https://github.com/yourusername/skin-disease-detection.git](https://github.com/yourusername/skin-disease-detection.git)
-cd skin-disease-detection
-2. Install Dependencies
+git clone https://github.com/Suvradip01/Skin-Disease-Detection-CNN.git
+cd Skin-Disease-Detection-CNN
+```
+
+### 2. Install Dependencies
 Ensure you have Python installed, then install the required libraries:
-
-Bash
-
+```bash
 pip install tensorflow matplotlib numpy
-3. Prepare Data
-Place your image dataset folder (e.g., Diseases) in the root directory. Ensure it follows the folder structure mentioned above.
+```
 
-4. Run the Notebook
+### 3. Prepare Data
+Place your image dataset folder (e.g., `training/Diseases`) in the root directory.
+
+### 4. Run the Notebook
 Launch Jupyter Notebook and open the project file:
-
-Bash
-
-jupyter notebook MobileNetV2.ipynb
+```bash
+jupyter notebook Test5.ipynb
+```
 Execute the cells sequentially to load data, build the model, and start training.
 
-📊 Performance & Results
-The model employs advanced training techniques including Learning Rate Reduction and Early Stopping to achieve optimal convergence.
+---
 
-Training Accuracy: ~83%
+## 📊 Performance
+The model employs **Class Weights** and **Focal Loss** to specifically address the imbalance in medical datasets, ensuring that critical cases like Melanoma are not overlooked. The training process uses **Autotune** for data prefetching to maximize hardware utilization.
 
-Validation Accuracy: ~78%
+---
 
-Test Accuracy: ~77.5%
-
-Note: The model saves the best weights automatically to best_model.keras based on validation loss minimization.
-
-Visualizing Predictions
-The notebook includes code to visualize predictions on unseen test data, displaying the actual class versus the predicted class with confidence scores.
-
-🛠️ Technology Stack
-Language: Python 3
-
-Deep Learning: TensorFlow, Keras
-
-Data Processing: NumPy, tf.data API
-
-Visualization: Matplotlib
-
-🔮 Future Work
-Data Augmentation: Implement advanced augmentation (CutMix, MixUp) to improve generalization and handle class imbalance.
-
-Quantization: Convert the model to TensorFlow Lite (TFLite) for deployment on Android/iOS mobile apps.
-
-Explainability: Integrate Grad-CAM to visualize which parts of the skin lesion the model focuses on for diagnosis.
-
-🤝 Contributing
-Contributions are welcome! Please feel free to submit a Pull Request.
+## 🛠️ Technology Stack
+*   **Language:** Python 3
+*   **Deep Learning:** TensorFlow, Keras (Functional API)
+*   **Data Processing:** NumPy, tf.data API
+*   **Visualization:** Matplotlib
